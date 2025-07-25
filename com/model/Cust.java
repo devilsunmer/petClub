@@ -1,24 +1,46 @@
 package com.model;
 
 public class Cust {
-	private static String name;
-	private static String phone;
+	private Integer id;
+	private String username=null;
+	private String password=null;
+	private String name;
+	private String phone;
 	
 	public Cust() {
 		super();
 	}
-	public static String getName() {
+
+	public Cust(String name, String phone) {
+		super();
+		this.name = name;
+		this.phone = phone;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getName() {
 		return name;
 	}
-	public static void setName(String name) {
-		Cust.name = name;
+
+	public void setName(String name) {
+		this.name = name;
 	}
-	public static String getPhone() {
+
+	public String getPhone() {
 		return phone;
 	}
-	public static void setPhone(String phone) {
-		Cust.phone = phone;
+
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
+	
 	
 	
 

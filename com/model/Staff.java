@@ -7,32 +7,57 @@ public class Staff {
 		HAPPYBABY("活潑小孩"),
 		MADBABY("易怒小孩");
 		*/
-	
-	private static String name;
-	private static String username;
-	private static String password;
+	private Integer id;
+	private String name;
+	private String username;
+	private String password;
 	
 	public Staff() {
 		super();
 	}
-	public static String getName() {
+
+	public Staff(String name, String username, String password) {
+		super();
+		this.name = name;
+		this.username = username;
+		this.password = password;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getName() {
 		return name;
 	}
-	public static void setName(String name) {
-		Staff.name = name;
+
+	public void setName(String name) {
+		this.name = name;
 	}
-	public static String getUsername() {
+
+	public String getUsername() {
 		return username;
 	}
-	public static void setUsername(String username) {
-		Staff.username = username;
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
-	public static String getPassword() {
+
+	public String getPassword() {
 		return password;
 	}
-	public static void setPassword(String password) {
-		Staff.password = password;
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
+	
+	
+	
+	
 	
 	
 	
