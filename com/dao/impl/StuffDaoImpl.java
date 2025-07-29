@@ -17,23 +17,56 @@ public class StuffDaoImpl implements StuffDao{
 	private static Connection connection=petClubConnection.getDb();
 
 	@Override
-	public void addStuff(String stuffname, String stuffusername, String stuffpassword) {
-		String sql="insert into stuff(stuffname,stuffusername,stuffpassword)";
+	public void addStuff(Staff stuff) {
+		String sql="insert into stuff(stuffname,stuffusername,stuffpassword) values(?,?,?)";
 		try {
-			PreparedStatement ps=connection.prepareStatement(sql);
-			ps.setString(1, stuffname);
-			ps.setString(2, stuffusername);
-			ps.setString(3, stuffpassword);
+			PreparedStatement preparedStatement=connection.prepareStatement(sql);
+			preparedStatement.setString(1, stuff.getName());
+			preparedStatement.setString(2, stuff.getUsername());
+			preparedStatement.setString(3, stuff.getPassword());
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 	}
 
 	@Override
-	public void addStuff(Staff stuff) {
+	public String searchAllStuff(Staff staff) {
+		String sql="select * from stuff where id=?";
+		try {
+			PreparedStatement preparedStatement=connection.prepareStatement(sql);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public void updateStuff() {
+		String sql="";
+		try {
+			PreparedStatement preparedStatement=connection.prepareStatement(sql);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}		
+	}
+
+	@Override
+	public void deleteStuff(Staff staff) {
+		String sql="";
+		try {
+			PreparedStatement preparedStatement=connection.prepareStatement(sql);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}		
+	}
+
+	@Override
+	public void searchSomeStuff(int id) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -12,7 +12,7 @@ public class petClubConnection {
 	
 	public static Connection getDb()
 	{
-		String url="jdbc:mysql://localhost:3306/company1";
+		String url="jdbc:mysql://localhost:3306/pet_club";
 		String user="root";
 		String password="1234";
 		
