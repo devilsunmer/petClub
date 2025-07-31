@@ -7,10 +7,10 @@ public class Staff {
 		HAPPYBABY("活潑小孩"),
 		MADBABY("易怒小孩");
 		*/
-	private Integer id;
-	private String name;
-	private String username;
-	private String password;
+	Integer id;
+	String name;
+	String username;
+	String password;
 	
 	public Staff() {
 		super();

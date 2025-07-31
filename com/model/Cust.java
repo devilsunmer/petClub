@@ -1,11 +1,9 @@
 package com.model;
 
 public class Cust {
-	private Integer id;
-	private String username=null;
-	private String password=null;
-	private String name;
-	private String phone;
+	Integer id;
+	String name;
+	String phone;
 	
 	public Cust() {
 		super();
@@ -42,6 +40,4 @@ public class Cust {
 	}
 	
 	
-	
-
 }
