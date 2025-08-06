@@ -1,0 +1,130 @@
+
+步驟 1：將食物數量解析邏輯放到 Tool 類
+首先，在 Tool 類中，我們可以加入解析和累加的方法，並處理中文數字。
+
+java
+複製
+編輯
+import java.util.*;
+import java.util.regex.*;
+
+public class Tool {
+
+    // 將中文數字轉換為阿拉伯數字
+    public static int chineseToNumber(String chinese) {
+        Map<String, Integer> chineseDigits = new HashMap<>();
+        chineseDigits.put("一", 1);
+        chineseDigits.put("二", 2);
+        chineseDigits.put("三", 3);
+        chineseDigits.put("四", 4);
+        chineseDigits.put("五", 5);
+        chineseDigits.put("六", 6);
+        chineseDigits.put("七", 7);
+        chineseDigits.put("八", 8);
+        chineseDigits.put("九", 9);
+        chineseDigits.put("十", 10);
+
+        if (chineseDigits.containsKey(chinese)) {
+            return chineseDigits.get(chinese);
+        }
+        return -1; // 無法轉換
+    }
+
+    // 解析食物名稱並返回該食物的總數
+    public static Map<String, Integer> parseFoodCounts(String foodStr) {
+        Map<String, Integer> foodCountMap = new HashMap<>();
+
+        // 正則表達式，匹配數字後跟食物名稱
+        Pattern pattern = Pattern.compile("(\\d+|[一二三四五六七八九十]+)(根|包|只|條)?([\\u4e00-\\u9fa5]+)");  // 匹配數字或中文數字後面是單位(根、包等)，後面是食物名稱
+        Matcher matcher = pattern.matcher(foodStr);
+
+        // 循環匹配字串，並將食物名稱和數字進行累加
+        while (matcher.find()) {
+            String quantityStr = matcher.group(1); // 數量部分
+            String foodName = matcher.group(3);    // 食物名稱部分
+
+            int quantity = 0;
+
+            // 如果是中文數字
+            if (quantityStr.matches("[一二三四五六七八九十]+")) {
+                quantity = chineseToNumber(quantityStr);
+            } else {
+                // 如果是數字
+                quantity = Integer.parseInt(quantityStr);
+            }
+
+            // 如果 Map 中已經有這個食物名稱，則累加數量，否則初始化為數字
+            foodCountMap.put(foodName, foodCountMap.getOrDefault(foodName, 0) + quantity);
+        }
+
+        return foodCountMap;
+    }
+}
+步驟 2：結合 Tool 的方法，處理 viewStaffFood 方法
+接下來，在你的 viewStaffFood 方法中，我們將使用 Tool.parseFoodCounts 來解析並累加食物數量。
+
+java
+複製
+編輯
+@Override
+public String viewStaffFood(String foodName) {
+    List<StaffIncome> staffIncomeList = staffIncomeDaoImpl.selectAll();  // 獲取所有員工的收入記錄
+    Map<String, Integer> totalFoodCount = new HashMap<>();  // 用來儲存每種食物的累積數量
+
+    // 遍歷每個員工的收入記錄
+    for (StaffIncome staffIncome : staffIncomeList) {
+        // 從每個員工的收入記錄中獲取他們的食物名稱（假設食物名稱存儲在 staffIncome.getStaffFood()）
+        String foodStr = staffIncome.getStaffFood();
+        
+        // 使用 Tool 類解析食物數量並累加到 totalFoodCount 中
+        Map<String, Integer> foodCountMap = Tool.parseFoodCounts(foodStr);
+
+        // 累加所有員工的食物數量
+        for (Map.Entry<String, Integer> entry : foodCountMap.entrySet()) {
+            totalFoodCount.put(entry.getKey(), totalFoodCount.getOrDefault(entry.getKey(), 0) + entry.getValue());
+        }
+    }
+
+    // 構造結果字串，顯示每個食物名稱及其總數量
+    StringBuilder result = new StringBuilder("目前零食累積:\n");
+    for (Map.Entry<String, Integer> entry : totalFoodCount.entrySet()) {
+        result.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
+    }
+
+    return result.toString();
+}
+解釋：
+Tool.parseFoodCounts 方法：這個方法會接收一個字串（食物名稱和數量），並返回一個 Map<String, Integer>，其中包含每個食物名稱及其數量。這個方法使用正則表達式來解析食物名稱和數量，並累加每個食物的數量。
+
+viewStaffFood 方法：這個方法會遍歷 staffIncomeList 中的每一條記錄，對每條記錄的 staffFood 字段使用 Tool.parseFoodCounts 方法進行解析，然後累加每個食物名稱的數量。最終會返回每個食物名稱及其總數量。
+
+totalFoodCount Map：這個 Map 用來儲存累積的食物數量。如果食物名稱出現多次，數量會被累加。
+
+測試：
+假設員工的食物資料如下：
+
+員工 1："2根狗骨頭, 1包貓尾草"
+
+員工 2："3根狗骨頭, 1根狗骨頭"
+
+員工 3："2包貓尾草"
+
+那麼，最終的輸出會是：
+
+makefile
+複製
+編輯
+目前零食累積:
+狗骨頭: 6
+貓尾草: 2
+小結：
+這樣的實現將 Tool 類中的食物解析邏輯與 viewStaffFood 方法結合，並使用 Map 來累加每個食物的數量。
+
+這種方法很靈活，未來如果需要處理更多的食物單位或條件，只需要在 Tool.parseFoodCounts 方法中擴展正則表達式或邏輯即可。
+
+如果有任何問題或進一步的需求，隨時告訴我！
+
+
+
+
+詢問 ChatGPT
