@@ -1,159 +1,192 @@
-package com.dao.impl;
+package dao.impl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
-import com.dao.CustMemberDao;
-import com.model.CustMember;
-import com.util.petClubConnection;
+import dao.CustMemberDao;
+import model.CustMember;
+import util.DbConnection;
 
 public class CustMemberDaoImpl implements CustMemberDao{
 
 	public static void main(String[] args) {
 		/*
-		CustMember custMember=new CustMemberDaoImpl().readCustMember(3);
-		if(custMember!=null)
-		{
-			new CustMemberDaoImpl().deleteCustMember(custMember);
-		}
+		CustMember custmember=new CustMember();
+		custmember.setId(4);
+		System.out.println(new CustMemberDaoImpl().deleteSome(custmember));
 		*/
-		
-		/*
-		CustMember custMember=new CustMemberDaoImpl().readCustMember(2);
-		if(custMember!=null)
-		{
-			custMember.setName("楊春梅");
-			custMember.setPassword("nunu");
-			custMember.setPhone("0958585858");
-			new CustMemberDaoImpl().updateCustMember(custMember);
-		}
-		*/
-		
-		/*
-		CustMember custMember=new CustMemberDaoImpl().readCustMember(1);
-		System.out.println("姓名:"+custMember.getName());
-		*/
-		
-//		System.out.println(new CustMemberDaoImpl().readCustMember(new CustMember()));
-		
-		
-//		new CustMemberDaoImpl().addCustMember(new CustMember("朱友朋", "user3", "756", "0911111111"));;
-		
-		/*CustMemberDaoImpl cm=new CustMemberDaoImpl();
-		cm.addCustMember("張小明", "user", "123", "0900000000");*/
 
+		
+		/*
+		CustMember custmember=new CustMember();
+		custmember.setCustMemberName("劉陽明");
+		custmember.setCustUsername("useruser");
+		custmember.setCustPassword("456");
+		custmember.setId(3);
+		System.out.println(new CustMemberDaoImpl().updateSome(custmember));
+		*/
+		
+//		System.out.println(new CustMemberDaoImpl().selectCust("user1","123"));
+//		System.out.println(new CustMemberDaoImpl().selectCust("user1"));
+//		System.out.println(new CustMemberDaoImpl().selectId(2).toString());
+//		System.out.println(new CustMemberDaoImpl().selectAll());
+//		new CustMemberDaoImpl().addMember(new CustMember("test","user3","123","0911111111"));
 	}
 	
-	private static Connection connection=petClubConnection.getDb();
-
+	public static Connection connection=DbConnection.getDb();
 
 	@Override
-	public void addCustMember(String name, String username, String password,String phone) {
-		//以防萬一還是保留舊有的方式
-		String sql="insert into cust_member(name,username,password,phone) values (?,?,?,?)";
+	public void addMember(CustMember custmember) {
+		String sql="insert into cust_member(custMemberName,custUsername,custPassword,custMemberPhone) values(?,?,?,?)";
 		try {
 			PreparedStatement preparedStatement=connection.prepareStatement(sql);
-			preparedStatement.setString(1, name);
-			preparedStatement.setString(2, username);
-			preparedStatement.setString(3, password);
-			preparedStatement.setString(4, phone);
+			preparedStatement.setString(1, custmember.getCustMemberName());
+			preparedStatement.setString(2, custmember.getCustUsername());
+			preparedStatement.setString(3, custmember.getCustPassword());
+			preparedStatement.setString(4, custmember.getCustMemberPhone());
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
-
+	
 	@Override
-	public void addCustMember(CustMember custMember) {
-		//物件導向注入的方式
-		String sql="insert into cust_member(name,username,password,phone) values(?,?,?,?)";
-		try {
-			PreparedStatement preparedStatement=connection.prepareStatement(sql);
-			preparedStatement.setString(1, custMember.getName());
-			preparedStatement.setString(2, custMember.getUsername());
-			preparedStatement.setString(3, custMember.getPassword());
-			preparedStatement.setString(4, custMember.getPhone());
-			preparedStatement.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		};
-		
-	}
-
-	@Override
-	public CustMember readCustMember(int id) {
-		String sql="select * from cust_member where id=?";
-		CustMember custMember=null;
-		try {
-			PreparedStatement preparedStatement=connection.prepareStatement(sql);
-			preparedStatement.setInt(1, id);
-			ResultSet resultSet=preparedStatement.executeQuery();
-			if(resultSet.next())
-			{
-				custMember=new CustMember();
-				custMember.setId(resultSet.getInt("id"));
-				custMember.setName(resultSet.getString("name"));
-				custMember.setUsername(resultSet.getString("username"));
-				custMember.setPassword(resultSet.getString("password"));
-				custMember.setPhone(resultSet.getString("phone"));
-				
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		};
-		return custMember;
-	}
-
-	@Override
-	public String readCustMember(CustMember custMember) {
+	public String selectAll() {
+		String custmemberAll="";
 		String sql="select * from cust_member";
-		String show="";
 		try {
 			PreparedStatement preparedStatement=connection.prepareStatement(sql);
 			ResultSet resultSet=preparedStatement.executeQuery();
 			while(resultSet.next())
 			{
-				show=show+"id:"+resultSet.getInt("id")
-					+"\t姓名:"+resultSet.getString("name")
-					+"\t使用者帳號:"+resultSet.getString("username")
-					+"\n密碼:"+resultSet.getString("password")
-					+"\t電話:"+resultSet.getString("phone")+"\n";
+				custmemberAll=custmemberAll+"ID:"+resultSet.getInt("idMember")
+					+"\n 會員客戶姓名　　:"+resultSet.getString("custMemberName")
+					+"\n 會員客戶帳號名稱:"+resultSet.getString("custUsername")
+					+"\t 會員客戶帳號密碼:"+resultSet.getString("custPassword")
+					+"\n 會員客戶電話　　:"+resultSet.getString("custMemberPhone");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-		};
-		return show;
+		}
+
+		return custmemberAll;
+	}
+	
+	@Override
+	public CustMember selectId(Integer id) {
+		String sql="select * from cust_member where idMember=?";
+		CustMember someone=null;
+		try {
+			PreparedStatement preparedStatement=connection.prepareStatement(sql);
+			preparedStatement.setInt(1, id);
+			ResultSet resultSet=preparedStatement.executeQuery();
+			if(resultSet.next())
+				{
+				someone=new CustMember();
+				someone.setIdMember(resultSet.getInt("idMember"));
+				someone.setCustMemberName(resultSet.getString("custMembername"));
+				someone.setCustUsername(resultSet.getString("custUsername"));
+				someone.setCustPassword(resultSet.getString("custPassword"));
+				someone.setCustMemberPhone(resultSet.getString("custMemberPhone"));
+				}
+			} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return someone;
 	}
 
 	@Override
-	public CustMember updateCustMember(CustMember custMember) {
-		String sql="update cust_member set name=?,password=?,phone=? where id=?";
+	public CustMember selectCust(String custUsername, String custPassword) {
+		String sql="select * from cust_member where custUsername=? and custPassword=?";
+		CustMember someone=null;
 		try {
 			PreparedStatement preparedStatement=connection.prepareStatement(sql);
-			preparedStatement.setString(1, custMember.getName());
-			preparedStatement.setString(2, custMember.getPassword());
-			preparedStatement.setString(3, custMember.getPhone());
-			preparedStatement.setInt(4, custMember.getId());
-			preparedStatement.executeUpdate();
+			preparedStatement.setString(1, custUsername);
+			preparedStatement.setString(2, custPassword);
+			ResultSet resultSet=preparedStatement.executeQuery();
+			if(resultSet.next())
+				{
+				someone=new CustMember();
+				someone.setIdMember(resultSet.getInt("idMember"));
+				someone.setCustMemberName(resultSet.getString("custMembername"));
+				someone.setCustUsername(resultSet.getString("custUsername"));
+				someone.setCustPassword(resultSet.getString("custPassword"));
+				someone.setCustMemberPhone(resultSet.getString("custMemberPhone"));
+				}
+			} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return someone;
+	}
+
+	@Override
+	public CustMember selectCust(String custUsername) {
+		String sql="select * from cust_member where custUsername=?";
+		CustMember someone=null;
+		try {
+			PreparedStatement preparedStatement=connection.prepareStatement(sql);
+			preparedStatement.setString(1, custUsername);
+			ResultSet resultSet=preparedStatement.executeQuery();
+			if(resultSet.next())
+				{
+				someone=new CustMember();
+				someone.setIdMember(resultSet.getInt("idMember"));
+				someone.setCustMemberName(resultSet.getString("custMembername"));
+				someone.setCustUsername(resultSet.getString("custUsername"));
+				someone.setCustPassword(resultSet.getString("custPassword"));
+				someone.setCustMemberPhone(resultSet.getString("custMemberPhone"));
+				}
+			} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return someone;
+	}
+
+	@Override
+	public CustMember updateSome(CustMember custmember) {
+		String sql="update cust_member set custMemberName=?,custUsername=?,custPassword=?,custMemberPhone=? where idMember=?";
+		try {
+			PreparedStatement preparedStatement=connection.prepareStatement(sql);
+			if(selectId(custmember.getIdMember())!=null) 
+			{
+				preparedStatement.setString(1, custmember.getCustMemberName());
+				preparedStatement.setString(2, custmember.getCustUsername());
+				preparedStatement.setString(3, custmember.getCustPassword());
+				preparedStatement.setString(4, custmember.getCustMemberPhone());
+				preparedStatement.setInt(5, custmember.getIdMember());
+				preparedStatement.executeUpdate();
+				return custmember;
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-		};
+		}
 		return null;
 	}
 
 	@Override
-	public CustMember deleteCustMember(CustMember custMember) {
-		String sql="delete from cust_member where id=?";
+	public CustMember deleteSome(CustMember custmember) {
+		String sql="delete from cust_member where idMember=?";
 		try {
 			PreparedStatement preparedStatement=connection.prepareStatement(sql);
-			preparedStatement.setInt(1, custMember.getId());
-			preparedStatement.executeUpdate();
+			if(selectId(custmember.getIdMember())!=null)
+			{
+				preparedStatement.setInt(1, custmember.getIdMember());
+				preparedStatement.executeUpdate();
+				return custmember;
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-		};
+		}
 		return null;
 	}
+
+
+
+
+	
+	
 
 }
