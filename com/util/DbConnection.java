@@ -1,13 +1,13 @@
-package com.util;
+package util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class petClubConnection {
+public class DbConnection {
 
 	public static void main(String[] args) {
-		System.out.println(petClubConnection.getDb());
+		System.out.println(getDb());
 	}
 	
 	public static Connection getDb()
@@ -16,19 +16,19 @@ public class petClubConnection {
 		String user="root";
 		String password="1234";
 		
-		Connection conn=null;
-		
+		Connection connection=null;
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
-			conn=DriverManager.getConnection(url, user, password);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			connection=DriverManager.getConnection(url, user, password);
 		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		return conn;
+		return connection;
 	}
-	
 
 }

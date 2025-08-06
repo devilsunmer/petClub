@@ -1,67 +1,59 @@
-package com.model;
+package model;
 
 public class CustMember {
-	private Integer id;
-	private String name;
-	private String username;
-	private String password;
-	private String phone;
-	
+	Integer idMember;
+	String custMemberName;
+	String custUsername;
+	String custPassword;
+	String custMemberPhone;
 	public CustMember() {
 		super();
 	}
-
-	public CustMember(String name, String username, String password, String phone) {
+	public CustMember(String custMemberName, String custUsername, String custPassword, String custMemberPhone) {
 		super();
-		this.name = name;
-		this.username = username;
-		this.password = password;
-		this.phone = phone;
+		this.custMemberName = custMemberName;
+		this.custUsername = custUsername;
+		this.custPassword = custPassword;
+		this.custMemberPhone = custMemberPhone;
 	}
-
-	public Integer getId() {
-		return id;
+	public Integer getIdMember() {
+		return idMember;
 	}
-
-	public void setId(Integer id) {
-		this.id = id;
+	public void setIdMember(Integer idMember) {
+		this.idMember = idMember;
 	}
-
-	public String getName() {
-		return name;
+	public String getCustMemberName() {
+		return custMemberName;
 	}
-
-	public void setName(String name) {
-		this.name = name;
+	public void setCustMemberName(String custMemberName) {
+		this.custMemberName = custMemberName;
 	}
-
-	public String getUsername() {
-		return username;
+	public String getCustUsername() {
+		return custUsername;
 	}
-
-	public void setUsername(String username) {
-		this.username = username;
+	public void setCustUsername(String custUsername) {
+		this.custUsername = custUsername;
 	}
-
-	public String getPassword() {
-		return password;
+	public String getCustPassword() {
+		return custPassword;
 	}
-
-	public void setPassword(String password) {
-		this.password = password;
+	public void setCustPassword(String custPassword) {
+		this.custPassword = custPassword;
 	}
-
-	public String getPhone() {
-		return phone;
+	public String getCustMemberPhone() {
+		return custMemberPhone;
 	}
-
-	public void setPhone(String phone) {
-		this.phone = phone;
+	public void setCustMemberPhone(String custMemberPhone) {
+		this.custMemberPhone = custMemberPhone;
 	}
-	
-	
-	
-	
+	public String toString()
+	{
+		return "ID:"+this.getIdMember()
+			+"\t會員姓名:"+this.getCustMemberName()
+			+"\n會員帳號:"+this.getCustUsername()
+			+"\t會員密碼:"+this.getCustPassword()
+			+"\n會員電話:"+this.getCustMemberPhone()+"\n";
+	}
 	
 	
 }
