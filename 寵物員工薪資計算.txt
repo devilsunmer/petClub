@@ -1,0 +1,127 @@
+計算收入並換算成食物數量：
+java
+複製
+編輯
+public class StaffIncomeServiceImpl {
+
+    // 每小時工資
+    private static final double HOURLY_WAGE = 10.0;
+
+    private CustOrderDaoImpl custOrderDaoImpl = new CustOrderDaoImpl();
+    private StaffIncomeDaoImpl staffIncomeDaoImpl = new StaffIncomeDaoImpl();
+
+    // 這個方法處理訂單並計算員工收入
+    public void processStaffIncome() {
+        // 從訂單資料庫獲取所有訂單
+        List<CustOrder> orders = custOrderDaoImpl.selectAllOrders();
+
+        // 遍歷每個訂單，根據訂單生成 StaffIncome 物件
+        for (CustOrder order : orders) {
+            // 計算每個訂單的總收入
+            double totalAmount = calculateOrderAmount(order);
+
+            // 計算員工收入：根據工作時間計算
+            double staffIncome = calculateStaffIncome(order.getCustOrderTimeRecorder(), totalAmount);
+
+            // 根據收入換算可以獲得的食物數量
+            String staffFood = getStaffFoodForIncome(staffIncome);
+            Integer foodQuantity = calculateFoodQuantity(staffIncome, staffFood);
+
+            // 創建 StaffIncome 物件
+            StaffIncome staffIncomeObj = new StaffIncome();
+            staffIncomeObj.setStaffName(getStaffNameForOrder(order));  // 設置員工姓名
+            staffIncomeObj.setStaffFood(staffFood);  // 設置食物名稱
+            staffIncomeObj.setStaffIncome(staffIncome);  // 設置員工收入
+            staffIncomeObj.setFoodQuantity(foodQuantity);  // 設置食物數量
+
+            // 保存 StaffIncome 物件到資料庫
+            staffIncomeDaoImpl.saveStaffIncome(staffIncomeObj);
+        }
+    }
+
+    // 根據訂單金額計算員工總收入
+    private double calculateStaffIncome(double workHours, double foodAmount) {
+        // 計算工作收入：每小時工資 * 訂單時間（小時）
+        double workIncome = workHours * HOURLY_WAGE;
+        // 返回總收入：工作收入 + 食物收入
+        return workIncome + foodAmount;
+    }
+
+    // 根據訂單金額計算食物數量
+    private Integer calculateFoodQuantity(double staffIncome, String food) {
+        int quantity = 0;
+        if ("狗骨頭".equals(food)) {
+            // 假設每 10 單位收入能換得 1 份狗骨頭
+            quantity = (int) (staffIncome / 10);  
+        } else if ("貓尾草".equals(food)) {
+            // 假設每 10 單位收入能換得 2 份貓尾草
+            quantity = (int) (staffIncome / 5);  // 每 5 單位收入能換 2 份貓尾草
+        }
+        return quantity;
+    }
+
+    // 根據收入換算食物
+    private String getStaffFoodForIncome(double staffIncome) {
+        if (staffIncome >= 10) {
+            return "狗骨頭";  // 假設員工收入大於 10 就換得狗骨頭
+        } else {
+            return "貓尾草";  // 否則換得貓尾草
+        }
+    }
+
+    // 根據食物名稱獲取價格
+    private double getPriceForFood(String foodName) {
+        switch (foodName) {
+            case "狗骨頭":
+                return 5.0;  // 假設價格是 5
+            case "貓尾草":
+                return 2.0;  // 假設價格是 2
+            default:
+                return 0.0;  // 其他食物的價格設為 0
+        }
+    }
+
+    // 假設這個方法用來根據訂單獲取員工名稱（這部分可以根據實際情況更改）
+    private String getStaffNameForOrder(CustOrder order) {
+        // 假設每個訂單都有一個員工名稱字段
+        return "員工" + order.getOrderId();  // 這裡用訂單ID模擬員工名稱
+    }
+
+    // 計算每個訂單的金額（食物的價格 * 訂單數量）
+    private double calculateOrderAmount(CustOrder order) {
+        double price = getPriceForFood(order.getFoodName());
+        return price * order.getQuantity();
+    }
+}
+3. 儲存 StaffIncome 資料到資料庫
+在 StaffIncomeDaoImpl 類中，你需要有一個方法來儲存 StaffIncome 物件。
+
+java
+複製
+編輯
+public class StaffIncomeDaoImpl {
+
+    // 儲存 StaffIncome 物件到資料庫
+    public void saveStaffIncome(StaffIncome staffIncome) {
+        String insertQuery = "INSERT INTO staff_income (staff_name, staff_income, staff_food, food_quantity) VALUES (?, ?, ?, ?)";
+        
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+             PreparedStatement pstmt = conn.prepareStatement(insertQuery)) {
+            
+            pstmt.setString(1, staffIncome.getStaffName());
+            pstmt.setDouble(2, staffIncome.getStaffIncome());
+            pstmt.setString(3, staffIncome.getStaffFood());
+            pstmt.setInt(4, staffIncome.getFoodQuantity());
+            
+            pstmt.executeUpdate();  // 執行插入操作
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
+結論
+計算收入：根據員工的工作時間 custOrderTimeRecorder 計算總收入。
+
+換算食物：根據員工的總收入，換算能夠獲得的食物數量。
+
+存儲結果：將結果存入 StaffIncome 資料庫。
