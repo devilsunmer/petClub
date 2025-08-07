@@ -1,0 +1,100 @@
+1. 列出可選擇的 Excel 檔案
+假設所有的 Excel 檔案存儲在一個指定的資料夾（如 /path/to/excel/reports/），我們可以讀取該資料夾中的所有 .xlsx 或 .xls 文件。
+
+java
+複製
+編輯
+import java.io.File;
+import javax.swing.*;
+
+public class ReportSelector {
+
+    public static String[] getAvailableReports() {
+        File folder = new File("/path/to/excel/reports/"); // 替換成你的檔案資料夾
+        File[] files = folder.listFiles((dir, name) -> name.endsWith(".xlsx") || name.endsWith(".xls"));
+        
+        // 取得檔案名稱並轉換為字符串陣列
+        String[] reportNames = new String[files.length];
+        for (int i = 0; i < files.length; i++) {
+            reportNames[i] = files[i].getName(); // 只取得檔案名稱
+        }
+        return reportNames;
+    }
+}
+2. 動態生成 JCheckBox 按鈕
+我們將根據 getAvailableReports() 返回的報表文件名稱動態生成 JCheckBox 來讓用戶選擇。
+
+java
+複製
+編輯
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class ShopUI extends JFrame {
+    
+    private JPanel contentPane;
+    private JButton printButton;
+    
+    public ShopUI() {
+        setTitle("報表列印");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setBounds(100, 100, 450, 300);
+        contentPane = new JPanel();
+        contentPane.setLayout(null);
+        setContentPane(contentPane);
+
+        // 獲取可選擇的報表名稱
+        String[] availableReports = ReportSelector.getAvailableReports();
+        
+        // 創建 JCheckBox 來顯示可選的報表
+        int yPosition = 50;
+        for (String reportName : availableReports) {
+            JCheckBox checkBox = new JCheckBox(reportName);
+            checkBox.setBounds(10, yPosition, 200, 30);
+            contentPane.add(checkBox);
+            yPosition += 40; // 增加間距
+        }
+
+        // 設定列印按鈕
+        printButton = new JButton("報表列印");
+        printButton.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+        printButton.setBounds(10, yPosition, 120, 38);
+        contentPane.add(printButton);
+
+        // 按鈕點擊事件
+        printButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // 查詢哪些勾選框被選中，並列印對應報表
+                Component[] components = contentPane.getComponents();
+                for (Component comp : components) {
+                    if (comp instanceof JCheckBox) {
+                        JCheckBox checkBox = (JCheckBox) comp;
+                        if (checkBox.isSelected()) {
+                            String reportName = checkBox.getText();
+                            printReport(reportName);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // 假設用來列印報表的函數
+    private void printReport(String reportName) {
+        JOptionPane.showMessageDialog(contentPane, "列印報表: " + reportName);
+        // 在此處根據報表名稱處理實際列印邏輯
+    }
+
+    public static void main(String[] args) {
+        EventQueue.invokeLater(() -> {
+            try {
+                ShopUI frame = new ShopUI();
+                frame.setVisible(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+}
